@@ -5,11 +5,11 @@ const Book = require('../models/Book')
 let books = require('../data/books.js') //import books
 
 router.route('/')
-    .get((req,res)=> {
+    .get((req,res,next)=> {
         Book.find()  //using promises
             // .then((boks)=>{res.json(books)})   data folder bata data lina ko lagi
             .then((books)=>{res.json(books)})  // post gare paxi matra data aauxa 
-            .catch(e=>console.log(e))
+            .catch(next)
         // res.json(books)
 
         // using async await == get(async(req,res)
@@ -22,14 +22,15 @@ router.route('/')
         // }
         
     })
-    .post((req,res)=>{
+    .post((req,res,next)=>{
         Book.create(req.body)
             .then((book) => {
                 res.status(201).json(book)
             })
-            .catch(err => {
-                res.status(400).json({error: err.message})
-            })
+            .catch(next)
+            // .catch(err => {
+            //     res.status(400).json({error: err.message})
+            // })
 
 
 
@@ -47,37 +48,40 @@ router.route('/')
 
 
 
-    .delete((req,res)=>{
+    .delete((req,res,next)=>{
         Book.deleteMany()
         .then((result)=>{
             res.json(result)
         })
-        .catch(err=>console.log(err))
+        .catch(next)
     })
 
 router.route('/:book_id')
-    .get((req,res)=>{
+    .get((req,res,next)=>{
         Book.findById(req.params.book_id)
             .then((book)=>{
+                if(!book) return res.status(404).json({error:"Book not found"})
                 res.json(book)
             })
-            .catch(err=>console.log(err))
+            // .catch(err=>next(err))
+            .catch(next)
     })
     .post((req,res)=>{  //id halera post garna mildaina
         res.status(405).json({error:"method not allowed"})
     })
-    .put((req,res)=>{
+    .put((req,res,next)=>{
         Book.findByIdAndUpdate(req.params.book_id,
             {$set: req.body},
             {new:true}
         )
             .then((updated)=>{res.json(updated)})
-            .catch(err=>console.log(err))
+            .catch(next)
     })
 
-    .delete((req,res)=>{
+    .delete((req,res,next)=>{
         Book.findByIdAndDelete(req.params.book_id)
-        .then((reply)=>{res.json(reply)})
-        .catch(err=>console.log(err))
+        .then((reply)=>res.status(201).end)
+        // .then((reply)=>{res.json(reply)})
+        .catch(next)
     })
 module.exports = router 

@@ -19,6 +19,17 @@ app.get('/', (req, res)=>{             //req=object of request
 
 app.use('/books',books_routes)                   //middleware use garnalai 
 
+//error handling middleware
+app.use((err,req,res,next)=>{
+    console.error(err)
+    if(err.name==='CastError'){
+        res.status(400)
+    }
+    else if(err.name==="ValidationError"){
+        res.status(400)
+    }
+    res.json({error: err.message})
+})
 // port num to host app
 app.listen(3000, () =>{
     console.log("server is running on port 3000")
