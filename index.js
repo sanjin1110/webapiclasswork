@@ -7,10 +7,12 @@ const app = express()
 mongoose.connect('mongodb://127.0.0.1:27017/c30-b')
     .then(() => console.log("connected to mongodb database"))
     .catch((err) => console.log(err))
-app.use(express.json())
+
+
+app.use(express.json())  //server ma aayeko data decode garna/bujhna lai
 
 app.get('/', (req, res)=>{             //req=object of request
-    res.send("hello world!")
+    res.send("hello world!")           // path match garyo vani yo chalxa
 })        
 
 // app.get('/api/books',(req,res) =>{
@@ -29,6 +31,11 @@ app.use((err,req,res,next)=>{
         res.status(400)
     }
     res.json({error: err.message})
+})
+
+//UNknown path handling middleware
+app.use((req,res)=>{
+    res.status(404).json({error:'path not found'})
 })
 // port num to host app
 app.listen(3000, () =>{
