@@ -5,7 +5,8 @@ const reviewSchema = new mongoose.Schema({
         type:String,
         required:true,
         minLength:[10,'review should be longer than 10 character']
-    }
+    },
+    
 })
 const bookSchema = new mongoose.Schema({
     title:{
