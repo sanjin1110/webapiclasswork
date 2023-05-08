@@ -1,6 +1,10 @@
+require('dotenv').config()
 const express = require('express')//handles and define request in app
 const mongoose = require('mongoose')
 const books_routes = require('./routes/books-routes.js')
+const users_routes = require('./routes/user-routes')
+const { verifyUser } = require('./middlewares/auth')
+
 // let books = require('./data/books.js') //import books
 // create instance of express
 const app = express() 
@@ -18,8 +22,11 @@ app.get('/', (req, res)=>{             //req=object of request
 // app.get('/api/books',(req,res) =>{
 //     res.json(books)
 // })
+// app.use(verifyUser)
+app.use('/users',users_routes)
 
-app.use('/books',books_routes)                   //middleware use garnalai 
+app.use('/books', verifyUser, books_routes) 
+                  //middleware use garnalai 
 
 //error handling middleware
 app.use((err,req,res,next)=>{
