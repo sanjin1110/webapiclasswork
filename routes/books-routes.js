@@ -2,6 +2,8 @@ const express = require('express')
 const uuid =require('uuid')
 const router = express.Router()
 const Book = require('../models/Book')
+const { verifyAdmin } = require('../middlewares/auth')
+
 // let books = require('../data/books.js') //import books
 
 router.route('/')
@@ -22,7 +24,7 @@ router.route('/')
         // }
         
     })
-    .post((req,res,next)=>{
+    .post(verifyAdmin,(req,res,next)=>{
         Book.create(req.body)
             .then((book) => {
                 res.status(201).json(book)
@@ -42,13 +44,13 @@ router.route('/')
         // // res.json(req.body)    //generate id and add it to list(HW)
         // res.json(books)
     })
-    .put((req,res)=>{                     //id nahali put garna mildaina
+    .put(verifyAdmin,(req,res)=>{                     //id nahali put garna mildaina
         res.status(405).json({error:"Method not allowed"})
     })
 
 
 
-    .delete((req,res,next)=>{
+    .delete(verifyAdmin,(req,res,next)=>{
         Book.deleteMany()
         .then((result)=>{
             res.json(result)
@@ -99,7 +101,8 @@ router.route('/:book_id/reviews')
             .then((book)=>{
                 if(!book) return res.status(404).json({error:'book not found'})
                 const review = {
-                    text:req.body.text
+                    text:req.body.text,
+                    user: req.user.id
                 }
                 book.reviews.push(review)
                 book.save()
@@ -108,7 +111,7 @@ router.route('/:book_id/reviews')
             })
             .catch(next)
     })
-    .delete((req,res,next)=>{
+    .delete(verifyAdmin,(req,res,next)=>{
         Book.findById(req.params.book_id)
             .then((book)=>{
                 if(!book) return res.status(404).json({error:"book not found"})
@@ -138,6 +141,7 @@ router.route('/:book_id/reviews/:review_id')
                 book.reviews = book.reviews.map((r)=>{
                     if(r._id == req.params.review_id){
                         r.text = req.body.text
+
                     }
                     return r
                 })

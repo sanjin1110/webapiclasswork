@@ -18,7 +18,7 @@ router.post('/register',(req,res,next)=>{
                     username: req.body.username,
                     password:hash,
                     email:req.body.email,
-                    fullname:req.body.fullname
+                    fullname:req.body.fullname,
                 }
                 User.create(user)
                     .then((user)=> res.status(201).json(user))
@@ -43,6 +43,8 @@ router.post('/login',(req,res,next)=>{
                     id: user._id,
                     username: user.username,
                     fullname:user.fullname,
+                    role: user.role
+
                 }
 
                 //token generation
