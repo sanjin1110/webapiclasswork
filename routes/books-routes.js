@@ -100,6 +100,8 @@ router.route('/:book_id/reviews')
         Book.findById(req.params.book_id)
             .then((book)=>{
                 if(!book) return res.status(404).json({error:'book not found'})
+                
+
                 const review = {
                     text:req.body.text,
                     user: req.user.id
@@ -127,7 +129,7 @@ router.route('/:book_id/reviews/:review_id')
     .get((req,res,next)=>{
         Book.findById(req.params.book_id)
             .then((book)=>{
-                if(!book) return res.status(404).json({error:"book not found"})
+                if(!book) return res.status(404).json({error:"book not found"})                
                 const review = book.reviews.id(req.params.review_id)
                 res.json(review)
             })
@@ -138,6 +140,10 @@ router.route('/:book_id/reviews/:review_id')
         Book.findById(req.params.book_id)
             .then((book)=>{
                 if(!book) return res.status(404).json({error:"book not found"})
+                let review = book.reviews.id(review_id)
+                if(review.user !== req.user.id){
+                    return res.status(403).json({error:"you did not add this review"})
+                }
                 book.reviews = book.reviews.map((r)=>{
                     if(r._id == req.params.review_id){
                         r.text = req.body.text
@@ -156,7 +162,11 @@ router.route('/:book_id/reviews/:review_id')
     .delete((req,res,next)=>{
         Book.findById(req.params.book_id)
             .then((book)=> {
-                    if(!book) return res.status(404).json({error:"book not found"})
+                if(!book) return res.status(404).json({error:"book not found"})
+                let review = book.reviews.id(review_id)
+                if(review.user !== req.user.id){
+                    return res.status(403).json({error:"you did not add this review"})
+                }
                 book.reviews = book.reviews.filter((r)=>r._id != req.params.review_id)
                 book.save()
                     .then(book => res.status(204).end())

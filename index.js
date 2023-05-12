@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const books_routes = require('./routes/books-routes.js')
 const users_routes = require('./routes/user-routes')
 const { verifyUser } = require('./middlewares/auth')
+const upload = require('./middlewares/upload')
 
 // let books = require('./data/books.js') //import books
 // create instance of express
@@ -25,8 +26,11 @@ app.get('/', (req, res)=>{             //req=object of request
 // app.use(verifyUser)
 app.use('/users',users_routes)
 
-app.use('/books', verifyUser, books_routes) 
-                  //middleware use garnalai 
+app.use('/books', verifyUser, books_routes) //middleware use garnalai 
+
+app.post('/images',upload.single('photo'),(req,res)=>{
+    res.json(req.file)
+})
 
 //error handling middleware
 app.use((err,req,res,next)=>{
