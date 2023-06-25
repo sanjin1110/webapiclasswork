@@ -6,7 +6,7 @@ const verifyUser = (req,res,next)=>{
 
 
     const authheader = req.headers.authorization
-    // console.log(authheader)
+    console.log(authheader)
 
 
     if(!authheader) return res.status(401).json({error:"no auth token provided"})

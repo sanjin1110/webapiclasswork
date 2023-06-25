@@ -24,7 +24,7 @@ router.route('/')
         // }
         
     })
-    .post(verifyAdmin,(req,res,next)=>{
+    .post((req,res,next)=>{
         Book.create(req.body)
             .then((book) => {
                 res.status(201).json(book)
@@ -71,10 +71,10 @@ router.route('/:book_id')
     .post((req,res)=>{  //id halera post garna mildaina
         res.status(405).json({error:"method not allowed"})
     })
-    .put((req,res,next)=>{
-        Book.findByIdAndUpdate(req.params.book_id,
-            {$set: req.body},
-            {new:true}
+                                    .put((req,res,next)=>{
+                                        Book.findByIdAndUpdate(req.params.book_id,
+                                            {$set: req.body},
+                                            {new:true}
         )
             .then((updated)=>{res.json(updated)})
             .catch(next)
